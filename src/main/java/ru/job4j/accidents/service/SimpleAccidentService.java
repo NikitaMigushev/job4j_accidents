@@ -38,4 +38,9 @@ public class SimpleAccidentService implements AccidentService {
     public Collection<Accident> findAll() {
         return accidentRepository.findAll();
     }
+
+    @Override
+    public int getLastId() {
+        return accidentRepository.getLastId();
+    }
 }

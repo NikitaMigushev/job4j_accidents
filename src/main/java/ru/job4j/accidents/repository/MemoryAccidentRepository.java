@@ -44,4 +44,14 @@ public class MemoryAccidentRepository implements AccidentRepository {
     public Collection<Accident> findAll() {
         return accidents.values();
     }
+
+    public int getLastId() {
+        int lastId = 0;
+        for (int id : accidents.keySet()) {
+            if (id > lastId) {
+                lastId = id;
+            }
+        }
+        return lastId;
+    }
 }

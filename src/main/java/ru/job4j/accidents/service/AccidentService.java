@@ -11,4 +11,6 @@ public interface AccidentService {
     boolean deleteById(int id);
     Optional<Accident> findById(int id);
     Collection<Accident> findAll();
+    int getLastId();
+
 }
