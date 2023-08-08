@@ -3,6 +3,7 @@ package ru.job4j.accidents.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
+import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.repository.AccidentRepository;
 
 import java.util.Collection;
@@ -42,5 +43,10 @@ public class SimpleAccidentService implements AccidentService {
     @Override
     public int getLastId() {
         return accidentRepository.getLastId();
+    }
+
+    @Override
+    public Collection<Accident> findByAccidentType(AccidentType accidentType) {
+        return accidentRepository.findByAccidentType(accidentType);
     }
 }

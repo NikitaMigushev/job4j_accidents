@@ -3,11 +3,13 @@ package ru.job4j.accidents.repository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.Accident;
+import ru.job4j.accidents.model.AccidentType;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Repository
@@ -43,6 +45,13 @@ public class MemoryAccidentRepository implements AccidentRepository {
     @Override
     public Collection<Accident> findAll() {
         return accidents.values();
+    }
+
+    public Collection<Accident> findByAccidentType(AccidentType accidentType) {
+        return accidents.values()
+                .stream()
+                .filter(accident -> accident.getType().equals(accidentType))
+                .collect(Collectors.toList());
     }
 
     public int getLastId() {
