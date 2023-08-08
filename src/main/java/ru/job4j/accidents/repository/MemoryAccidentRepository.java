@@ -1,0 +1,47 @@
+package ru.job4j.accidents.repository;
+
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Repository;
+import ru.job4j.accidents.model.Accident;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
+@AllArgsConstructor
+@Repository
+public class MemoryAccidentRepository implements AccidentRepository {
+    private Map<Integer, Accident> accidents = new ConcurrentHashMap<>();
+
+    @Override
+    public Optional<Accident> save(Accident accident) {
+        accidents.put(accident.getId(), accident);
+        return Optional.of(accident);
+    }
+
+    @Override
+    public boolean update(Accident accident) {
+        int id = accident.getId();
+        if (accidents.containsKey(id)) {
+            accidents.put(id, accident);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteById(int id) {
+        return accidents.remove(id) != null;
+    }
+
+    @Override
+    public Optional<Accident> findById(int id) {
+        return Optional.ofNullable(accidents.get(id));
+    }
+
+    @Override
+    public Collection<Accident> findAll() {
+        return accidents.values();
+    }
+}
