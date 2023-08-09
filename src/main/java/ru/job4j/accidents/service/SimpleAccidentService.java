@@ -15,8 +15,6 @@ public class SimpleAccidentService implements AccidentService {
 
     public SimpleAccidentService(AccidentRepository accidentRepository) {
         this.accidentRepository = accidentRepository;
-        accidentRepository.save(new Accident("Test name", "Test text", "test address"));
-        accidentRepository.save(new Accident("Test name2", "Test text2", "test address2"));
     }
 
     @Override

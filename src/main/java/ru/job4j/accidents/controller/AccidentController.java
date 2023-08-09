@@ -5,13 +5,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.accidents.model.Accident;
-import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.service.AccidentService;
+import ru.job4j.accidents.service.AccidentTypeService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,14 +20,11 @@ import java.util.Set;
 @RequestMapping("/accident")
 public class AccidentController {
     private final AccidentService accidentService;
+    private final AccidentTypeService accidentTypeService;
 
     @GetMapping("/create")
     public String viewCreateAccident(Model model, HttpSession session) {
-        List<AccidentType> types = new ArrayList<>();
-        types.add(new AccidentType(1, "Две машины"));
-        types.add(new AccidentType(2, "Машина и человек"));
-        types.add(new AccidentType(3, "Машина и велосипед"));
-        model.addAttribute("types", types);
+        model.addAttribute("types", accidentTypeService.findAll());
         List<Rule> rules = List.of(
 
                 new Rule(2, "Статья. 2"),
@@ -52,12 +48,8 @@ public class AccidentController {
     @GetMapping("/edit")
     public String viewEditAccident(Model model, @RequestParam("id") int accidentId, HttpSession session) {
         var accident = accidentService.findById(accidentId).get();
-        List<AccidentType> types = new ArrayList<>();
-        types.add(new AccidentType(1, "Две машины"));
-        types.add(new AccidentType(2, "Машина и человек"));
-        types.add(new AccidentType(3, "Машина и велосипед"));
         model.addAttribute("accident", accident);
-        model.addAttribute("types", types);
+        model.addAttribute("types", accidentTypeService.findAll());
         List<Rule> rules = List.of(
                 new Rule(2, "Статья. 2"),
                 new Rule(3, "Статья. 3")
