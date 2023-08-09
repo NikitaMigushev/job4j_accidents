@@ -24,7 +24,6 @@ public class AccidentController {
 
     @GetMapping("/create")
     public String viewCreateAccident(Model model, HttpSession session) {
-        model.addAttribute("lastId", accidentService.getLastId());
         List<AccidentType> types = new ArrayList<>();
         types.add(new AccidentType(1, "Две машины"));
         types.add(new AccidentType(2, "Машина и человек"));

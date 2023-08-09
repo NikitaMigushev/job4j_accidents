@@ -1,6 +1,5 @@
 package ru.job4j.accidents.service;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
@@ -10,10 +9,15 @@ import java.util.Collection;
 import java.util.Optional;
 
 
-@AllArgsConstructor
 @Service
 public class SimpleAccidentService implements AccidentService {
     private final AccidentRepository accidentRepository;
+
+    public SimpleAccidentService(AccidentRepository accidentRepository) {
+        this.accidentRepository = accidentRepository;
+        accidentRepository.save(new Accident("Test name", "Test text", "test address"));
+        accidentRepository.save(new Accident("Test name2", "Test text2", "test address2"));
+    }
 
     @Override
     public Optional<Accident> save(Accident accident) {
@@ -38,11 +42,6 @@ public class SimpleAccidentService implements AccidentService {
     @Override
     public Collection<Accident> findAll() {
         return accidentRepository.findAll();
-    }
-
-    @Override
-    public int getLastId() {
-        return accidentRepository.getLastId();
     }
 
     @Override

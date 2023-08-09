@@ -9,15 +9,19 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Repository
 public class MemoryAccidentRepository implements AccidentRepository {
     private Map<Integer, Accident> accidents = new ConcurrentHashMap<>();
+    private final AtomicInteger idCounter = new AtomicInteger(0);
 
     @Override
     public Optional<Accident> save(Accident accident) {
+        int id = idCounter.incrementAndGet();
+        accident.setId(id);
         accidents.put(accident.getId(), accident);
         return Optional.of(accident);
     }
@@ -52,15 +56,5 @@ public class MemoryAccidentRepository implements AccidentRepository {
                 .stream()
                 .filter(accident -> accident.getType().equals(accidentType))
                 .collect(Collectors.toList());
-    }
-
-    public int getLastId() {
-        int lastId = 0;
-        for (int id : accidents.keySet()) {
-            if (id > lastId) {
-                lastId = id;
-            }
-        }
-        return lastId;
     }
 }
