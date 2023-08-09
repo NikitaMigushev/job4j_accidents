@@ -8,11 +8,10 @@ import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.service.AccidentService;
 import ru.job4j.accidents.service.AccidentTypeService;
+import ru.job4j.accidents.service.RuleService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -22,24 +21,18 @@ public class AccidentController {
     private final AccidentService accidentService;
     private final AccidentTypeService accidentTypeService;
 
+    private final RuleService ruleService;
+
     @GetMapping("/create")
     public String viewCreateAccident(Model model, HttpSession session) {
         model.addAttribute("types", accidentTypeService.findAll());
-        List<Rule> rules = List.of(
-
-                new Rule(2, "Статья. 2"),
-                new Rule(3, "Статья. 3")
-        );
-        model.addAttribute("rules", rules);
-        session.setAttribute("rules", rules);
+        model.addAttribute("rules", ruleService.findAll());
         return "accident/create";
     }
 
     @PostMapping("/save")
     public String save(@ModelAttribute Accident accident, HttpServletRequest req, HttpSession session) {
-        String[] ids = req.getParameterValues("rIds");
-        List<Rule> rules = (List<Rule>) session.getAttribute("rules");
-        var selectedRules = getSelectedRules(ids, rules);
+        Set<Rule> selectedRules = ruleService.getSelectedRules(req.getParameterValues("rIds"));
         accident.setRules(selectedRules);
         accidentService.save(accident);
         return "redirect:/index";
@@ -50,35 +43,15 @@ public class AccidentController {
         var accident = accidentService.findById(accidentId).get();
         model.addAttribute("accident", accident);
         model.addAttribute("types", accidentTypeService.findAll());
-        List<Rule> rules = List.of(
-                new Rule(2, "Статья. 2"),
-                new Rule(3, "Статья. 3")
-        );
-        session.setAttribute("rules", rules);
-        model.addAttribute("rules", rules);
+        model.addAttribute("rules", ruleService.findAll());
         return "accident/edit";
     }
 
     @PostMapping("/edit")
     public String edit(@ModelAttribute Accident accident, HttpServletRequest req, HttpSession session) {
-        String[] ids = req.getParameterValues("rIds");
-        List<Rule> rules = (List<Rule>) session.getAttribute("rules");
-        var selectedRules = getSelectedRules(ids, rules);
+        var selectedRules = ruleService.getSelectedRules(req.getParameterValues("rIds"));
         accident.setRules(selectedRules);
         accidentService.update(accident);
         return "redirect:/index";
-    }
-
-    private Set<Rule> getSelectedRules(String[] ids, List<Rule> rules) {
-        Set<Rule> selectedRules = new HashSet<>();
-        for (String id : ids) {
-            for (Rule rule : rules) {
-                if (id.equals(String.valueOf(rule.getId()))) {
-                    selectedRules.add(rule);
-                    break;
-                }
-            }
-        }
-        return selectedRules;
     }
 }
