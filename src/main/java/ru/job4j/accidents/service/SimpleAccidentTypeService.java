@@ -13,9 +13,6 @@ public class SimpleAccidentTypeService implements AccidentTypeService {
 
     public SimpleAccidentTypeService(AccidentTypeRepository accidentTypeRepository) {
         this.accidentTypeRepository = accidentTypeRepository;
-        accidentTypeRepository.save(new AccidentType(1, "Две машины"));
-        accidentTypeRepository.save(new AccidentType(2, "Машина и человек"));
-        accidentTypeRepository.save(new AccidentType(3, "Машина и велосипед"));
     }
 
     @Override

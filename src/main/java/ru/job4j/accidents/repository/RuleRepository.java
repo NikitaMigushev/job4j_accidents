@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface RuleRepository {
     Optional<Rule> save(Rule rule);
-    boolean update(Rule rule);
+    boolean update(Rule updatedRule);
     boolean deleteById(int id);
     Optional<Rule> findById(int id);
     Collection<Rule> findAll();

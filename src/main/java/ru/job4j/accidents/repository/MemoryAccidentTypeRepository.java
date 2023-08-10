@@ -1,6 +1,5 @@
 package ru.job4j.accidents.repository;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.AccidentType;
 
@@ -10,11 +9,17 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@AllArgsConstructor
 @Repository
 public class MemoryAccidentTypeRepository implements AccidentTypeRepository {
     private Map<Integer, AccidentType> accidentTypes = new ConcurrentHashMap<>();
     private final AtomicInteger idCounter = new AtomicInteger(0);
+
+    public MemoryAccidentTypeRepository(Map<Integer, AccidentType> accidentTypes) {
+        this.accidentTypes = accidentTypes;
+        this.save(new AccidentType(1, "Две машины"));
+        this.save(new AccidentType(2, "Машина и человек"));
+        this.save(new AccidentType(3, "Машина и велосипед"));
+    }
 
     @Override
     public Optional<AccidentType> save(AccidentType accidentType) {
@@ -25,13 +30,11 @@ public class MemoryAccidentTypeRepository implements AccidentTypeRepository {
     }
 
     @Override
-    public boolean update(AccidentType accidentType) {
-        int id = accidentType.getId();
-        if (accidentTypes.containsKey(id)) {
-            accidentTypes.put(id, accidentType);
-            return true;
-        }
-        return false;
+    public boolean update(AccidentType updatedAccidentType) {
+        return accidentTypes.computeIfPresent(updatedAccidentType.getId(), (key, existingType) -> {
+            existingType.setName(updatedAccidentType.getName());
+            return existingType;
+        }) != null;
     }
 
     @Override

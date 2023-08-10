@@ -25,8 +25,8 @@ public class SimpleRuleService implements RuleService {
     }
 
     @Override
-    public boolean update(Rule rule) {
-        return ruleRepository.update(rule);
+    public boolean update(Rule updatedRule) {
+        return ruleRepository.update(updatedRule);
     }
 
     @Override

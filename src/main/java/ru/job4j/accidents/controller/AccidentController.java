@@ -25,6 +25,7 @@ public class AccidentController {
 
     @GetMapping("/create")
     public String viewCreateAccident(Model model, HttpSession session) {
+        model.addAttribute("accident", new Accident());
         model.addAttribute("types", accidentTypeService.findAll());
         model.addAttribute("rules", ruleService.findAll());
         return "accident/create";
@@ -32,6 +33,8 @@ public class AccidentController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute Accident accident, HttpServletRequest req, HttpSession session) {
+        var selectedAccidentType = accidentTypeService.findById(accident.getType().getId()).get();
+        accident.setType(selectedAccidentType);
         Set<Rule> selectedRules = ruleService.getSelectedRules(req.getParameterValues("rIds"));
         accident.setRules(selectedRules);
         accidentService.save(accident);
@@ -49,6 +52,8 @@ public class AccidentController {
 
     @PostMapping("/edit")
     public String edit(@ModelAttribute Accident accident, HttpServletRequest req, HttpSession session) {
+        var selectedAccidentType = accidentTypeService.findById(accident.getType().getId()).get();
+        accident.setType(selectedAccidentType);
         var selectedRules = ruleService.getSelectedRules(req.getParameterValues("rIds"));
         accident.setRules(selectedRules);
         accidentService.update(accident);

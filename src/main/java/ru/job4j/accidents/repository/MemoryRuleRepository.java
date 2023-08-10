@@ -21,13 +21,11 @@ public class MemoryRuleRepository implements RuleRepository {
     }
 
     @Override
-    public boolean update(Rule rule) {
-        int id = rule.getId();
-        if (rules.containsKey(id)) {
-            rules.put(id, rule);
-            return true;
-        }
-        return false;
+    public boolean update(Rule updatedRule) {
+        return rules.computeIfPresent(updatedRule.getId(), (key, existingRule) -> {
+            existingRule.setName(updatedRule.getName());
+            return existingRule;
+        }) != null;
     }
 
     @Override

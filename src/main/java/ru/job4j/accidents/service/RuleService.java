@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface RuleService {
     Optional<Rule> save(Rule rule);
-    boolean update(Rule rule);
+    boolean update(Rule updatedRule);
     boolean deleteById(int id);
     Optional<Rule> findById(int id);
     Collection<Rule> findAll();

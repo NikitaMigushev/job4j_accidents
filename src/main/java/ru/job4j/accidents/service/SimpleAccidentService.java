@@ -23,8 +23,8 @@ public class SimpleAccidentService implements AccidentService {
     }
 
     @Override
-    public boolean update(Accident accident) {
-        return accidentRepository.update(accident);
+    public boolean update(Accident updatedAccident) {
+        return accidentRepository.update(updatedAccident);
     }
 
     @Override
