@@ -32,13 +32,15 @@ public class MemoryAccidentRepository implements AccidentRepository {
     }
 
     @Override
-    public boolean update(Accident accident) {
-        int id = accident.getId();
-        if (accidents.containsKey(id)) {
-            accidents.put(id, accident);
-            return true;
-        }
-        return false;
+    public boolean update(Accident updatedAccident) {
+        return accidents.computeIfPresent(updatedAccident.getId(), (key, existingAccident) -> {
+            existingAccident.setName(updatedAccident.getName());
+            existingAccident.setText(updatedAccident.getText());
+            existingAccident.setAddress(updatedAccident.getAddress());
+            existingAccident.setType(updatedAccident.getType());
+            existingAccident.setRules(updatedAccident.getRules());
+            return existingAccident;
+        }) != null;
     }
 
     @Override

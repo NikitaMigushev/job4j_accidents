@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface AccidentRepository {
     Optional<Accident> save(Accident accident);
-    boolean update(Accident accident);
+    boolean update(Accident updatedAccident);
     boolean deleteById(int id);
     Optional<Accident> findById(int id);
     Collection<Accident> findAll();
