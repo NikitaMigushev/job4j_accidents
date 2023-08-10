@@ -35,7 +35,7 @@ public class AccidentController {
     public String save(@ModelAttribute Accident accident, HttpServletRequest req, HttpSession session) {
         var selectedAccidentType = accidentTypeService.findById(accident.getType().getId()).get();
         accident.setType(selectedAccidentType);
-        Set<Rule> selectedRules = ruleService.getSelectedRules(req.getParameterValues("rIds"));
+        Set<Rule> selectedRules = ruleService.findByIds(req.getParameterValues("rIds"));
         accident.setRules(selectedRules);
         accidentService.save(accident);
         return "redirect:/index";
@@ -54,7 +54,7 @@ public class AccidentController {
     public String edit(@ModelAttribute Accident accident, HttpServletRequest req, HttpSession session) {
         var selectedAccidentType = accidentTypeService.findById(accident.getType().getId()).get();
         accident.setType(selectedAccidentType);
-        var selectedRules = ruleService.getSelectedRules(req.getParameterValues("rIds"));
+        var selectedRules = ruleService.findByIds(req.getParameterValues("rIds"));
         accident.setRules(selectedRules);
         accidentService.update(accident);
         return "redirect:/index";

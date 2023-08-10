@@ -3,14 +3,25 @@ package ru.job4j.accidents.repository;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.Rule;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class MemoryRuleRepository implements RuleRepository {
     private Map<Integer, Rule> rules = new ConcurrentHashMap<>();
     private final AtomicInteger idCounter = new AtomicInteger(0);
+
+    public MemoryRuleRepository(Map<Integer, Rule> rules) {
+        this.rules = rules;
+        this.save(new Rule(2, "Статья. 2"));
+        this.save(new Rule(3, "Статья. 3"));
+    }
 
     @Override
     public Optional<Rule> save(Rule rule) {
@@ -44,19 +55,18 @@ public class MemoryRuleRepository implements RuleRepository {
     }
 
     @Override
-    public Collection<Rule> findByIds(String[] ids) {
-        List<Rule> foundRules = new ArrayList<>();
-        for (String idStr : ids) {
-            try {
-                int id = Integer.parseInt(idStr);
-                Rule rule = rules.get(id);
-                if (rule != null) {
-                    foundRules.add(rule);
-                }
-            } catch (NumberFormatException e) {
-                System.err.println("Invalid ID format: " + idStr);
-            }
-        }
-        return foundRules;
+    public Set<Rule> findByIds(String[] ids) {
+        return Stream.of(ids)
+                .map(idStr -> {
+                    try {
+                        int id = Integer.parseInt(idStr);
+                        return rules.get(id);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid ID format: " + idStr);
+                        return null;
+                    }
+                })
+                .filter(rule -> rule != null)
+                .collect(Collectors.toSet());
     }
 }

@@ -5,7 +5,6 @@ import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.repository.RuleRepository;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -15,8 +14,6 @@ public class SimpleRuleService implements RuleService {
 
     public SimpleRuleService(RuleRepository ruleRepository) {
         this.ruleRepository = ruleRepository;
-        ruleRepository.save(new Rule(2, "Статья. 2"));
-        ruleRepository.save(new Rule(3, "Статья. 3"));
     }
 
     @Override
@@ -45,14 +42,7 @@ public class SimpleRuleService implements RuleService {
     }
 
     @Override
-    public Collection<Rule> findByIds(String[] ids) {
+    public Set<Rule> findByIds(String[] ids) {
         return ruleRepository.findByIds(ids);
-    }
-
-    @Override
-    public Set<Rule> getSelectedRules(String[] ids) {
-        Set<Rule> selectedRules = new HashSet<>();
-        selectedRules.addAll(ruleRepository.findByIds(ids));
-        return selectedRules;
     }
 }

@@ -12,6 +12,5 @@ public interface RuleService {
     boolean deleteById(int id);
     Optional<Rule> findById(int id);
     Collection<Rule> findAll();
-    Collection<Rule> findByIds(String[] ids);
-    Set<Rule> getSelectedRules(String[] ids);
+    Set<Rule> findByIds(String[] ids);
 }

@@ -4,6 +4,7 @@ import ru.job4j.accidents.model.Rule;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 public interface RuleRepository {
     Optional<Rule> save(Rule rule);
@@ -11,5 +12,5 @@ public interface RuleRepository {
     boolean deleteById(int id);
     Optional<Rule> findById(int id);
     Collection<Rule> findAll();
-    Collection<Rule> findByIds(String[] ids);
+    Set<Rule> findByIds(String[] ids);
 }
