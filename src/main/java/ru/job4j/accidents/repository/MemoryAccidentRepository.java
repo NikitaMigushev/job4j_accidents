@@ -1,6 +1,5 @@
 package ru.job4j.accidents.repository;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
@@ -12,11 +11,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+
 @Repository
 public class MemoryAccidentRepository implements AccidentRepository {
     private Map<Integer, Accident> accidents = new ConcurrentHashMap<>();
     private final AtomicInteger idCounter = new AtomicInteger(0);
+
+    public MemoryAccidentRepository(Map<Integer, Accident> accidents) {
+        this.accidents = accidents;
+        this.save(new Accident("Test name", "Test text", "test address"));
+        this.save(new Accident("Test name", "Test text", "test address"));
+    }
 
     @Override
     public Optional<Accident> save(Accident accident) {
