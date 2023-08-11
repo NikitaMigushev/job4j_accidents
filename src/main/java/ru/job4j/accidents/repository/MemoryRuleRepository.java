@@ -58,15 +58,9 @@ public class MemoryRuleRepository implements RuleRepository {
     public Set<Rule> findByIds(String[] ids) {
         return Stream.of(ids)
                 .map(idStr -> {
-                    try {
                         int id = Integer.parseInt(idStr);
                         return rules.get(id);
-                    } catch (NumberFormatException e) {
-                        System.err.println("Invalid ID format: " + idStr);
-                        return null;
-                    }
-                })
-                .filter(rule -> rule != null)
+                }).filter(rule -> rule != null)
                 .collect(Collectors.toSet());
     }
 }
