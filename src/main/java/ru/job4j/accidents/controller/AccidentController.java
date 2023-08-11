@@ -33,8 +33,6 @@ public class AccidentController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute Accident accident, HttpServletRequest req, HttpSession session) {
-        var selectedAccidentType = accidentTypeService.findById(accident.getType().getId()).get();
-        accident.setType(selectedAccidentType);
         Set<Rule> selectedRules = ruleService.findByIds(req.getParameterValues("rIds"));
         accident.setRules(selectedRules);
         accidentService.save(accident);

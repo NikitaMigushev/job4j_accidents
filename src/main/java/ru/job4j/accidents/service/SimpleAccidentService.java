@@ -1,25 +1,29 @@
 package ru.job4j.accidents.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
-import ru.job4j.accidents.repository.JdbcAccidentRepository;
+import ru.job4j.accidents.repository.MemoryAccidentRepository;
 
 import java.util.Collection;
 import java.util.Optional;
 
 
 @Service
+@AllArgsConstructor
 public class SimpleAccidentService implements AccidentService {
-    private final JdbcAccidentRepository accidentRepository;
-
-    public SimpleAccidentService(JdbcAccidentRepository accidentRepository) {
-        this.accidentRepository = accidentRepository;
-    }
+    private final MemoryAccidentRepository accidentRepository;
+    private final AccidentTypeService accidentTypeService;
 
     @Override
     public Optional<Accident> save(Accident accident) {
-        return accidentRepository.save(accident);
+        var saveAccident = accident;
+        if (accident.getType().getId() > 0 && accident.getType().getName() == null) {
+            var selectedAccidentType = accidentTypeService.findById(accident.getType().getId()).get();
+            saveAccident.setType(selectedAccidentType);
+        }
+        return accidentRepository.save(saveAccident);
     }
 
     @Override
