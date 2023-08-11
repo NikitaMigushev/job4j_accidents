@@ -17,8 +17,7 @@ public class MemoryRuleRepository implements RuleRepository {
     private Map<Integer, Rule> rules = new ConcurrentHashMap<>();
     private final AtomicInteger idCounter = new AtomicInteger(0);
 
-    public MemoryRuleRepository(Map<Integer, Rule> rules) {
-        this.rules = rules;
+    public MemoryRuleRepository() {
         this.save(new Rule(2, "Статья. 2"));
         this.save(new Rule(3, "Статья. 3"));
     }

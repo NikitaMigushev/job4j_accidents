@@ -14,8 +14,7 @@ public class MemoryAccidentTypeRepository implements AccidentTypeRepository {
     private Map<Integer, AccidentType> accidentTypes = new ConcurrentHashMap<>();
     private final AtomicInteger idCounter = new AtomicInteger(0);
 
-    public MemoryAccidentTypeRepository(Map<Integer, AccidentType> accidentTypes) {
-        this.accidentTypes = accidentTypes;
+    public MemoryAccidentTypeRepository() {
         this.save(new AccidentType(1, "Две машины"));
         this.save(new AccidentType(2, "Машина и человек"));
         this.save(new AccidentType(3, "Машина и велосипед"));
