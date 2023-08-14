@@ -18,12 +18,7 @@ public class SimpleAccidentService implements AccidentService {
 
     @Override
     public Optional<Accident> save(Accident accident) {
-        var saveAccident = accident;
-        if (accident.getType().getId() > 0 && accident.getType().getName() == null) {
-            var selectedAccidentType = accidentTypeService.findById(accident.getType().getId()).get();
-            saveAccident.setType(selectedAccidentType);
-        }
-        return accidentRepository.save(saveAccident);
+        return accidentRepository.save(accident);
     }
 
     @Override
