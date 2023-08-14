@@ -57,9 +57,8 @@ public class MemoryRuleRepository implements RuleRepository {
     public Set<Rule> findByIds(String[] ids) {
         return Stream.of(ids)
                 .map(idStr -> {
-                        int id = Integer.parseInt(idStr);
-                        return rules.get(id);
-                }).filter(rule -> rule != null)
+                        return rules.get(Integer.parseInt(idStr));
+                })
                 .collect(Collectors.toSet());
     }
 }
