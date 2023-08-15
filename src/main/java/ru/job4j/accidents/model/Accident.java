@@ -15,14 +15,14 @@ public class Accident {
     @EqualsAndHashCode.Include
     private int id;
     private String name;
-    private String text;
+    private String description;
     private String address;
     private AccidentType type;
     private Set<Rule> rules;
 
     public Accident(String name, String text, String address) {
         this.name = name;
-        this.text = text;
+        this.description = text;
         this.address = address;
     }
 }

@@ -15,6 +15,7 @@ import java.util.Optional;
 public class SimpleAccidentService implements AccidentService {
     private final MemoryAccidentRepository accidentRepository;
     private final AccidentTypeService accidentTypeService;
+    private final RuleService ruleService;
 
     @Override
     public Optional<Accident> save(Accident accident) {
@@ -22,7 +23,20 @@ public class SimpleAccidentService implements AccidentService {
     }
 
     @Override
+    public Optional<Accident> save(Accident accident, String[] ruleIds) {
+        accident.setType(accidentTypeService.findById(accident.getType().getId()).get());
+        accident.setRules(ruleService.findByIds(ruleIds));
+        return accidentRepository.save(accident);
+    }
+
+    @Override
     public boolean update(Accident updatedAccident) {
+        return accidentRepository.update(updatedAccident);
+    }
+
+    public boolean update(Accident updatedAccident, String[] ruleIds) {
+        updatedAccident.setType(accidentTypeService.findById(updatedAccident.getType().getId()).get());
+        updatedAccident.setRules(ruleService.findByIds(ruleIds));
         return accidentRepository.update(updatedAccident);
     }
 

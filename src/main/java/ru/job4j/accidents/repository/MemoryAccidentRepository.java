@@ -34,7 +34,7 @@ public class MemoryAccidentRepository implements AccidentRepository {
     public boolean update(Accident updatedAccident) {
         return accidents.computeIfPresent(updatedAccident.getId(), (key, existingAccident) -> {
             existingAccident.setName(updatedAccident.getName());
-            existingAccident.setText(updatedAccident.getText());
+            existingAccident.setDescription(updatedAccident.getDescription());
             existingAccident.setAddress(updatedAccident.getAddress());
             existingAccident.setType(updatedAccident.getType());
             existingAccident.setRules(updatedAccident.getRules());

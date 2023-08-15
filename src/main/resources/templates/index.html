@@ -34,7 +34,7 @@
                 <tr th:each="accident: ${accidents}">
                     <td th:text="${accident.id}"/>
                     <td th:text="${accident.name}"/>
-                    <td th:text="${accident.text}"/>
+                    <td th:text="${accident.description}"/>
                     <td th:text="${accident.address}"/>
                     <td><a th:href="@{/accident/edit(id=${accident.id})}">Редактировать</a>
                     </td>

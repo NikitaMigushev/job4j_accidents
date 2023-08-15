@@ -13,5 +13,6 @@ public interface AccidentService {
     Optional<Accident> findById(int id);
     Collection<Accident> findAll();
     Collection<Accident> findByAccidentType(AccidentType accidentType);
-
+    Optional<Accident> save(Accident accident, String[] ruleIds);
+    boolean update(Accident updatedAccident, String[] ruleIds);
 }
