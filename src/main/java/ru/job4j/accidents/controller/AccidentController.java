@@ -35,7 +35,6 @@ public class AccidentController {
         return "redirect:/index";
     }
 
-
     @GetMapping("/edit")
     public String viewEditAccident(Model model, @RequestParam("id") int accidentId, HttpSession session) {
         var accident = accidentService.findById(accidentId).get();

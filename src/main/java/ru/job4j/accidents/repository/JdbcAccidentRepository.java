@@ -1,6 +1,6 @@
 package ru.job4j.accidents.repository;
 
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -10,16 +10,12 @@ import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
 
 import java.sql.PreparedStatement;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
+@AllArgsConstructor
 public class JdbcAccidentRepository implements AccidentRepository {
     private final JdbcTemplate jdbc;
-
-    public JdbcAccidentRepository(JdbcTemplate jdbc) {
-        this.jdbc = jdbc;
-    }
 
     @Override
     public Optional<Accident> save(Accident accident) {
@@ -39,7 +35,6 @@ public class JdbcAccidentRepository implements AccidentRepository {
         if (generatedId != null) {
             accident.setId(generatedId.intValue());
             saveAccidentRules(accident);
-
             return Optional.of(accident);
         } else {
             return Optional.empty();
@@ -55,31 +50,159 @@ public class JdbcAccidentRepository implements AccidentRepository {
 
     @Override
     public boolean update(Accident accident) {
-        String sql = "update accident set name = ? where id = ?";
-        return jdbc.update(sql, accident.getName(), accident.getId()) > 0;
+        String updateAccidentSql = "update accident set name = ?, description = ?, address = ?, accident_type_id = ? where id = ?";
+        int rowsAffected = jdbc.update(
+                updateAccidentSql,
+                accident.getName(),
+                accident.getDescription(),
+                accident.getAddress(),
+                accident.getType().getId(),
+                accident.getId()
+        );
+
+        if (rowsAffected > 0) {
+            String deleteAccidentRulesSql = "delete from accident_rule_mapping where accident_id = ?";
+            jdbc.update(deleteAccidentRulesSql, accident.getId());
+            saveAccidentRules(accident);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public boolean deleteById(int id) {
-        String sql = "delete from accident where id = ?";
-        return jdbc.update(sql, id) > 0;
+        String deleteAccidentRulesSql = "delete from accident_rule_mapping where accident_id = ?";
+        jdbc.update(deleteAccidentRulesSql, id);
+        String deleteAccidentSql = "delete from accident where id = ?";
+        int rowsAffected = jdbc.update(deleteAccidentSql, id);
+        return rowsAffected > 0;
     }
 
     @Override
     public Optional<Accident> findById(int id) {
-        String sql = "select * from accident where id = ?";
-        Accident accident = jdbc.queryForObject(sql, new BeanPropertyRowMapper<>(Accident.class), id);
+        String sql = "SELECT a.id AS accident_id, a.name AS accident_name, a.description AS accident_description, "
+                + "a.address AS accident_address, t.id AS type_id, t.name AS type_name, "
+                + "r.id AS rule_id, r.name AS rule_name "
+                + "FROM accident a "
+                + "INNER JOIN accident_type t ON a.accident_type_id = t.id "
+                + "LEFT JOIN accident_rule_mapping arm ON a.id = arm.accident_id "
+                + "LEFT JOIN accident_rule r ON arm.rule_id = r.id "
+                + "WHERE a.id = ?";
+
+        Accident accident = jdbc.query(sql, new Object[]{id}, rs -> {
+            Accident fetchedAccident = null;
+            Map<Integer, Rule> ruleMap = new HashMap<>();
+
+            while (rs.next()) {
+                if (fetchedAccident == null) {
+                    fetchedAccident = new Accident();
+                    fetchedAccident.setId(rs.getInt("accident_id"));
+                    fetchedAccident.setName(rs.getString("accident_name"));
+                    fetchedAccident.setDescription(rs.getString("accident_description"));
+                    fetchedAccident.setAddress(rs.getString("accident_address"));
+
+                    AccidentType type = new AccidentType();
+                    type.setId(rs.getInt("type_id"));
+                    type.setName(rs.getString("type_name"));
+                    fetchedAccident.setType(type);
+                }
+
+                int ruleId = rs.getInt("rule_id");
+                if (ruleId != 0 && !ruleMap.containsKey(ruleId)) {
+                    Rule rule = new Rule();
+                    rule.setId(ruleId);
+                    rule.setName(rs.getString("rule_name"));
+                    ruleMap.put(ruleId, rule);
+                }
+            }
+
+            if (fetchedAccident != null) {
+                fetchedAccident.setRules(new HashSet<>(ruleMap.values()));
+            }
+            return fetchedAccident;
+        });
         return Optional.ofNullable(accident);
     }
 
     @Override
     public Collection<Accident> findAll() {
-        String sql = "select * from accident";
-        return jdbc.query(sql, new BeanPropertyRowMapper<>(Accident.class));
+        String sql = "SELECT a.id AS accident_id, a.name AS accident_name, a.description AS accident_description, "
+                + "a.address AS accident_address, t.id AS type_id, t.name AS type_name, "
+                + "r.id AS rule_id, r.name AS rule_name "
+                + "FROM accident a "
+                + "INNER JOIN accident_type t ON a.accident_type_id = t.id "
+                + "LEFT JOIN accident_rule_mapping arm ON a.id = arm.accident_id "
+                + "LEFT JOIN accident_rule r ON arm.rule_id = r.id";
+
+        Map<Integer, Accident> accidentsMap = new HashMap<>();
+
+        jdbc.query(sql, rs -> {
+            int accidentId = rs.getInt("accident_id");
+            Accident accident = accidentsMap.get(accidentId);
+            if (accident == null) {
+                accident = new Accident();
+                accident.setId(accidentId);
+                accident.setName(rs.getString("accident_name"));
+                accident.setDescription(rs.getString("accident_description"));
+                accident.setAddress(rs.getString("accident_address"));
+                AccidentType type = new AccidentType();
+                type.setId(rs.getInt("type_id"));
+                type.setName(rs.getString("type_name"));
+                accident.setType(type);
+                accidentsMap.put(accidentId, accident);
+            }
+            int ruleId = rs.getInt("rule_id");
+            if (ruleId != 0) {
+                Rule rule = new Rule();
+                rule.setId(ruleId);
+                rule.setName(rs.getString("rule_name"));
+                accident.getRules().add(rule);
+            }
+        });
+
+        return accidentsMap.values();
     }
 
     @Override
     public Collection<Accident> findByAccidentType(AccidentType accidentType) {
-        throw new UnsupportedOperationException("findByAccidentType is not applicable for this table structure");
+        String sql = "SELECT a.id AS accident_id, a.name AS accident_name, a.description AS accident_description, "
+                + "a.address AS accident_address, t.id AS type_id, t.name AS type_name, "
+                + "r.id AS rule_id, r.name AS rule_name "
+                + "FROM accident a "
+                + "INNER JOIN accident_type t ON a.accident_type_id = t.id "
+                + "LEFT JOIN accident_rule_mapping arm ON a.id = arm.accident_id "
+                + "LEFT JOIN accident_rule r ON arm.rule_id = r.id "
+                + "WHERE t.id = ?";
+
+        Map<Integer, Accident> accidentsMap = new HashMap<>();
+        jdbc.query(sql, new Object[]{accidentType.getId()}, rs -> {
+            int accidentId = rs.getInt("accident_id");
+            Accident accident = accidentsMap.get(accidentId);
+
+            if (accident == null) {
+                accident = new Accident();
+                accident.setId(accidentId);
+                accident.setName(rs.getString("accident_name"));
+                accident.setDescription(rs.getString("accident_description"));
+                accident.setAddress(rs.getString("accident_address"));
+
+                AccidentType type = new AccidentType();
+                type.setId(rs.getInt("type_id"));
+                type.setName(rs.getString("type_name"));
+                accident.setType(type);
+
+                accidentsMap.put(accidentId, accident);
+            }
+
+            int ruleId = rs.getInt("rule_id");
+            if (ruleId != 0) {
+                Rule rule = new Rule();
+                rule.setId(ruleId);
+                rule.setName(rs.getString("rule_name"));
+                accident.getRules().add(rule);
+            }
+        });
+        return accidentsMap.values();
     }
 }
