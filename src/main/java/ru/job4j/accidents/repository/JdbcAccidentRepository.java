@@ -90,8 +90,6 @@ public class JdbcAccidentRepository implements AccidentRepository {
                 + "WHERE a.id = ?";
 
         List<Accident> accidents = jdbc.query(sql, new Object[]{id}, accidentRowExtractor);
-
-        // Check if the list contains any accidents, and return the first one if found
         if (!accidents.isEmpty()) {
             return Optional.of(accidents.get(0));
         }
