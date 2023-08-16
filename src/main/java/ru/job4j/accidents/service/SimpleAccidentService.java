@@ -10,7 +10,6 @@ import ru.job4j.accidents.repository.SpringDataAccidentRepository;
 import java.util.Collection;
 import java.util.Optional;
 
-
 @Service
 @AllArgsConstructor
 public class SimpleAccidentService implements AccidentService {
@@ -33,7 +32,7 @@ public class SimpleAccidentService implements AccidentService {
     @Override
     public boolean deleteById(int id) {
         accidentRepository.deleteById(id);
-        return !accidentRepository.existsById(id); // To verify deletion
+        return !accidentRepository.existsById(id);
     }
 
     @Override
@@ -59,7 +58,6 @@ public class SimpleAccidentService implements AccidentService {
         if (existingAccident != null) {
             existingAccident.setDescription(updatedAccident.getDescription());
             existingAccident.setName(updatedAccident.getName());
-            // ... Update other fields as needed
             accidentRepository.save(existingAccident);
             return true;
         }
@@ -70,12 +68,8 @@ public class SimpleAccidentService implements AccidentService {
     @Override
     public boolean update(Accident updatedAccident, String[] ruleIds) {
         if (update(updatedAccident)) {
-            // Update rules here
-            // ...
             return true;
         }
         return false;
     }
-
-
 }
