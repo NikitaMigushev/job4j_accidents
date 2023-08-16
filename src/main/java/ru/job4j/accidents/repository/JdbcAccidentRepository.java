@@ -16,6 +16,7 @@ import java.util.*;
 @AllArgsConstructor
 public class JdbcAccidentRepository implements AccidentRepository {
     private final JdbcTemplate jdbc;
+    private final AccidentRowExtractor accidentRowExtractor;
 
     @Override
     public Optional<Accident> save(Accident accident) {
@@ -36,9 +37,8 @@ public class JdbcAccidentRepository implements AccidentRepository {
             accident.setId(generatedId.intValue());
             saveAccidentRules(accident);
             return Optional.of(accident);
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     private void saveAccidentRules(Accident accident) {
@@ -65,9 +65,8 @@ public class JdbcAccidentRepository implements AccidentRepository {
             jdbc.update(deleteAccidentRulesSql, accident.getId());
             saveAccidentRules(accident);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override
@@ -90,39 +89,13 @@ public class JdbcAccidentRepository implements AccidentRepository {
                 + "LEFT JOIN accident_rule r ON arm.rule_id = r.id "
                 + "WHERE a.id = ?";
 
-        Accident accident = jdbc.query(sql, new Object[]{id}, rs -> {
-            Accident fetchedAccident = null;
-            Map<Integer, Rule> ruleMap = new HashMap<>();
+        List<Accident> accidents = jdbc.query(sql, new Object[]{id}, accidentRowExtractor);
 
-            while (rs.next()) {
-                if (fetchedAccident == null) {
-                    fetchedAccident = new Accident();
-                    fetchedAccident.setId(rs.getInt("accident_id"));
-                    fetchedAccident.setName(rs.getString("accident_name"));
-                    fetchedAccident.setDescription(rs.getString("accident_description"));
-                    fetchedAccident.setAddress(rs.getString("accident_address"));
-
-                    AccidentType type = new AccidentType();
-                    type.setId(rs.getInt("type_id"));
-                    type.setName(rs.getString("type_name"));
-                    fetchedAccident.setType(type);
-                }
-
-                int ruleId = rs.getInt("rule_id");
-                if (ruleId != 0 && !ruleMap.containsKey(ruleId)) {
-                    Rule rule = new Rule();
-                    rule.setId(ruleId);
-                    rule.setName(rs.getString("rule_name"));
-                    ruleMap.put(ruleId, rule);
-                }
-            }
-
-            if (fetchedAccident != null) {
-                fetchedAccident.setRules(new HashSet<>(ruleMap.values()));
-            }
-            return fetchedAccident;
-        });
-        return Optional.ofNullable(accident);
+        // Check if the list contains any accidents, and return the first one if found
+        if (!accidents.isEmpty()) {
+            return Optional.of(accidents.get(0));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -135,33 +108,7 @@ public class JdbcAccidentRepository implements AccidentRepository {
                 + "LEFT JOIN accident_rule_mapping arm ON a.id = arm.accident_id "
                 + "LEFT JOIN accident_rule r ON arm.rule_id = r.id";
 
-        Map<Integer, Accident> accidentsMap = new HashMap<>();
-
-        jdbc.query(sql, rs -> {
-            int accidentId = rs.getInt("accident_id");
-            Accident accident = accidentsMap.get(accidentId);
-            if (accident == null) {
-                accident = new Accident();
-                accident.setId(accidentId);
-                accident.setName(rs.getString("accident_name"));
-                accident.setDescription(rs.getString("accident_description"));
-                accident.setAddress(rs.getString("accident_address"));
-                AccidentType type = new AccidentType();
-                type.setId(rs.getInt("type_id"));
-                type.setName(rs.getString("type_name"));
-                accident.setType(type);
-                accidentsMap.put(accidentId, accident);
-            }
-            int ruleId = rs.getInt("rule_id");
-            if (ruleId != 0) {
-                Rule rule = new Rule();
-                rule.setId(ruleId);
-                rule.setName(rs.getString("rule_name"));
-                accident.getRules().add(rule);
-            }
-        });
-
-        return accidentsMap.values();
+        return jdbc.query(sql, accidentRowExtractor);
     }
 
     @Override
@@ -175,34 +122,6 @@ public class JdbcAccidentRepository implements AccidentRepository {
                 + "LEFT JOIN accident_rule r ON arm.rule_id = r.id "
                 + "WHERE t.id = ?";
 
-        Map<Integer, Accident> accidentsMap = new HashMap<>();
-        jdbc.query(sql, new Object[]{accidentType.getId()}, rs -> {
-            int accidentId = rs.getInt("accident_id");
-            Accident accident = accidentsMap.get(accidentId);
-
-            if (accident == null) {
-                accident = new Accident();
-                accident.setId(accidentId);
-                accident.setName(rs.getString("accident_name"));
-                accident.setDescription(rs.getString("accident_description"));
-                accident.setAddress(rs.getString("accident_address"));
-
-                AccidentType type = new AccidentType();
-                type.setId(rs.getInt("type_id"));
-                type.setName(rs.getString("type_name"));
-                accident.setType(type);
-
-                accidentsMap.put(accidentId, accident);
-            }
-
-            int ruleId = rs.getInt("rule_id");
-            if (ruleId != 0) {
-                Rule rule = new Rule();
-                rule.setId(ruleId);
-                rule.setName(rs.getString("rule_name"));
-                accident.getRules().add(rule);
-            }
-        });
-        return accidentsMap.values();
+        return jdbc.query(sql, new Object[]{accidentType.getId()}, accidentRowExtractor);
     }
 }

@@ -32,9 +32,8 @@ public class JdbcAccidentTypeRepository implements AccidentTypeRepository {
         if (generatedId != null) {
             accidentType.setId(generatedId.intValue());
             return Optional.of(accidentType);
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     @Override

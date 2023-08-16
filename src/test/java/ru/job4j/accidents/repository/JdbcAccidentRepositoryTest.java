@@ -18,6 +18,7 @@ class JdbcAccidentRepositoryTest {
     private static JdbcAccidentRepository jdbcAccidentRepository;
     private static JdbcAccidentTypeRepository jdbcAccidentTypeRepository;
     private static JdbcAccidentRuleRepository jdbcAccidentRuleRepository;
+    private static AccidentRowExtractor accidentRowExtractor;
 
     @BeforeAll
     public static void initRepositories() throws Exception {
@@ -32,7 +33,8 @@ class JdbcAccidentRepositoryTest {
         var configuration = new JdbcConfig();
         var datasource = configuration.ds(driver, url, username, password);
         var jdbc = configuration.jdbc(datasource);
-        jdbcAccidentRepository = new JdbcAccidentRepository(jdbc);
+        accidentRowExtractor = new AccidentRowExtractor();
+        jdbcAccidentRepository = new JdbcAccidentRepository(jdbc, accidentRowExtractor);
         jdbcAccidentTypeRepository = new JdbcAccidentTypeRepository(jdbc);
         jdbcAccidentRuleRepository = new JdbcAccidentRuleRepository(jdbc);
     }

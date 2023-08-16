@@ -30,9 +30,8 @@ public class JdbcAccidentRuleRepository implements RuleRepository {
         if (generatedId != null) {
             rule.setId(generatedId.intValue());
             return Optional.of(rule);
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     @Override
