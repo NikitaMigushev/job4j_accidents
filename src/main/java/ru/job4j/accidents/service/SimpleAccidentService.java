@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
-import ru.job4j.accidents.repository.HibernateAccidentTypeRepository;
 import ru.job4j.accidents.repository.SpringDataAccidentRepository;
 
 import java.util.Collection;
@@ -14,7 +13,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SimpleAccidentService implements AccidentService {
     private final SpringDataAccidentRepository accidentRepository;
-    private final HibernateAccidentTypeRepository accidentTypeService;
+    private final AccidentTypeService accidentTypeService;
     private final RuleService ruleService;
 
     @Override
@@ -24,8 +23,7 @@ public class SimpleAccidentService implements AccidentService {
 
     @Override
     public Optional<Accident> save(Accident accident, String[] ruleIds) {
-        accident.setType(accidentTypeService.findById(accident.getType().getId()).get());
-        accident.setRules(ruleService.findByIds(ruleIds));
+        setTypeAndRuleInAccident(accident, ruleIds);
         return Optional.ofNullable(accidentRepository.save(accident));
     }
 
@@ -58,6 +56,8 @@ public class SimpleAccidentService implements AccidentService {
         if (existingAccident != null) {
             existingAccident.setDescription(updatedAccident.getDescription());
             existingAccident.setName(updatedAccident.getName());
+            existingAccident.setType(updatedAccident.getType());
+            existingAccident.setRules(updatedAccident.getRules());
             accidentRepository.save(existingAccident);
             return true;
         }
@@ -67,9 +67,15 @@ public class SimpleAccidentService implements AccidentService {
 
     @Override
     public boolean update(Accident updatedAccident, String[] ruleIds) {
+        setTypeAndRuleInAccident(updatedAccident, ruleIds);
         if (update(updatedAccident)) {
             return true;
         }
         return false;
+    }
+
+    private void setTypeAndRuleInAccident(Accident accident, String[] ruleIds) {
+        accident.setType(accidentTypeService.findById(accident.getType().getId()).get());
+        accident.setRules(ruleService.findByIds(ruleIds));
     }
 }
