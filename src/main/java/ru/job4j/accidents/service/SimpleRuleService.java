@@ -18,7 +18,7 @@ public class SimpleRuleService implements RuleService {
 
     @Override
     public Optional<Rule> save(Rule rule) {
-        return  Optional.ofNullable(ruleRepository.save(rule));
+        return Optional.ofNullable(ruleRepository.save(rule));
     }
 
     @Override
@@ -32,9 +32,8 @@ public class SimpleRuleService implements RuleService {
             existingRule.setName(updatedRule.getName());
             ruleRepository.save(existingRule);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override
