@@ -14,8 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -37,9 +35,14 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeRequests(auth -> auth
-                        .anyRequest().authenticated())
-                .formLogin(withDefaults())
+                .authorizeRequests(authorizeRequests -> authorizeRequests
+                        .antMatchers("/login").permitAll()
+                        .antMatchers("/**").hasAnyRole("ADMIN", "USER")
+                )
+                .formLogin(login -> login
+                        .defaultSuccessUrl("/")
+                        .permitAll()
+                )
                 .build();
     }
 
