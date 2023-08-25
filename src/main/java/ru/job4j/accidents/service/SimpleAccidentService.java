@@ -1,6 +1,7 @@
 package ru.job4j.accidents.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
@@ -12,7 +13,8 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class SimpleAccidentService implements AccidentService {
-    private final SpringDataAccidentRepository accidentRepository;
+    @Autowired
+    private SpringDataAccidentRepository accidentRepository;
     private final AccidentTypeService accidentTypeService;
     private final RuleService ruleService;
 

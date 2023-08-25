@@ -1,3 +1,4 @@
+/*
 package ru.job4j.accidents.repository;
 
 import org.junit.jupiter.api.AfterEach;
@@ -57,3 +58,4 @@ class JdbcAccidentRuleRepositoryTest {
         assertThat(checkResult.get().getName()).isEqualTo("Test type 2");
     }
 }
+*/

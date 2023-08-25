@@ -1,12 +1,14 @@
-create table users(
-	username varchar(50) not null primary key,
+create table accident_user(
+    id bigserial primary key,
+	username varchar(50) not null,
 	password varchar(500) not null,
 	enabled boolean not null
 );
 
-create table authorities (
-	username varchar(50) not null,
-	authority varchar(50) not null,
-	constraint fk_authorities_users foreign key(username) references users(username)
+create table user_authority (
+    id bigserial primary key,
+	authority varchar(50) not null
 );
-create unique index ix_auth_username on authorities (username,authority);
+
+INSERT INTO user_authority (authority) VALUES ('ROLE_USER');
+INSERT INTO user_authority (authority) VALUES ('ROLE_ADMIN');

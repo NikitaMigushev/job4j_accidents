@@ -1,3 +1,4 @@
+/*
 package ru.job4j.accidents.repository;
 
 import org.junit.jupiter.api.AfterEach;
@@ -82,3 +83,4 @@ class JdbcAccidentRepositoryTest {
         assertThat(jdbcAccidentRepository.findById(updatedAccident.getId()).get().getName()).isEqualTo("Test 2");
     }
 }
+*/

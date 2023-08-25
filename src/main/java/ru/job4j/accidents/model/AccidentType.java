@@ -19,4 +19,8 @@ public class AccidentType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+
+    public AccidentType(String name) {
+        this.name = name;
+    }
 }

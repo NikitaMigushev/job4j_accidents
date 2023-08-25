@@ -15,6 +15,7 @@
     <include file="scripts/005_dml_insert_into_accident_type_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/006_dml_insert_into_rule_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/007_ddl_create_users_and_authorities_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/008_ddl_create_user_authority_table.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 
 

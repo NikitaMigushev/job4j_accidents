@@ -1,3 +1,4 @@
+/*
 package ru.job4j.accidents.configuration;
 
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,6 @@ import javax.sql.DataSource;
 @EnableJpaRepositories(basePackages = "ru.job4j.accidents.repository")
 @EnableTransactionManagement
 public class DataConfig {
-
     @Primary
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource ds) {
@@ -37,3 +37,4 @@ public class DataConfig {
         return txManager;
     }
 }
+*/

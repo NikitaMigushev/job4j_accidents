@@ -1,4 +1,6 @@
+/*
 package ru.job4j.accidents.configuration;
+
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ import java.util.Properties;
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
 public class HibernateConfig {
+
     @Bean
     public LocalSessionFactoryBean sessionFactory(@Value("${hibernate.dialect}") String dialect, DataSource ds) {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
@@ -35,3 +38,4 @@ public class HibernateConfig {
         return tx;
     }
 }
+*/

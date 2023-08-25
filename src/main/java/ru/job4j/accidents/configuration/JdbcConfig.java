@@ -1,3 +1,4 @@
+/*
 package ru.job4j.accidents.configuration;
 
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -33,3 +34,4 @@ public class JdbcConfig {
         return new JdbcTemplate(ds);
     }
 }
+*/

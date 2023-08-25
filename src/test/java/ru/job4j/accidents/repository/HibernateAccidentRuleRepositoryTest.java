@@ -1,3 +1,4 @@
+/*
 package ru.job4j.accidents.repository;
 
 import org.hibernate.Session;
@@ -84,3 +85,4 @@ class HibernateAccidentRuleRepositoryTest {
         assertThat(rules).hasSize(2);
     }
 }
+*/

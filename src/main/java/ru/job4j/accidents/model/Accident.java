@@ -42,4 +42,13 @@ public class Accident {
         this.description = text;
         this.address = address;
     }
+
+    public Accident(String name) {
+        this.name = name;
+    }
+
+    public Accident(String name, AccidentType type) {
+        this.name = name;
+        this.type = type;
+    }
 }
