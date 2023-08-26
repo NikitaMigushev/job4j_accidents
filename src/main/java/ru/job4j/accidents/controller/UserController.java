@@ -48,7 +48,6 @@ public class UserController {
     @PostMapping("/register")
     public String register(Model model, @ModelAttribute AccidentUser user, HttpServletRequest request) {
         var savedAccidentUser = userService.save(user);
-        var authorities = userAuthorityRepository.findAll();
         System.out.println("check here");
         if (savedAccidentUser.isEmpty()) {
             model.addAttribute("message", "Пользователь с такой почтой уже существует");
