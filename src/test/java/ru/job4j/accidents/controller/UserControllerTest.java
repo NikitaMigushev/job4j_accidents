@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerTests {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -26,9 +26,9 @@ class UserControllerTests {
 
     @Test
     void testLogout() throws Exception {
-        mockMvc.perform(get("/users/logout").sessionAttr("user", new AccidentUser())) // Set a dummy user in the session
+        mockMvc.perform(get("/users/logout").sessionAttr("user", new AccidentUser()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/users/login")); // Ensure the session attribute is removed
+                .andExpect(redirectedUrl("http://localhost/users/login"));
     }
 
     @Test
