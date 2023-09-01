@@ -83,11 +83,11 @@ class AccidentControllerTest {
         when(accidentService.findById(1)).thenReturn(Optional.of(testAccident));
         this.mockMvc.perform(get("/accident/edit")
                         .param("id", "1")
-                        .with(csrf())) // Add CSRF protection
+                        .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("accident", "types", "rules"))
-                .andExpect(model().attribute("accident", testAccident)); // Verify the testAccident is added to the model
+                .andExpect(model().attribute("accident", testAccident));
         verify(accidentService).findById(1);
     }
 }
